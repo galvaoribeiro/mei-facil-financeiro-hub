@@ -34,6 +34,7 @@ const Auth = () => {
       email: "",
       password: "",
     },
+    mode: "onChange", // Add this to validate on change instead of just on submit
   });
 
   const signupForm = useForm<z.infer<typeof signupSchema>>({
@@ -45,6 +46,7 @@ const Auth = () => {
       cnpj: "",
       companyName: "",
     },
+    mode: "onChange", // Add this to validate on change instead of just on submit
   });
 
   const handleLogin = async (values: z.infer<typeof loginSchema>) => {
