@@ -1,81 +1,141 @@
 
-# MEI Simplificado
+## 🚀 SaaS "Obrigações MEI Simplificadas"
 
-Um aplicativo web para ajudar empreendedores individuais (MEI) a gerenciar suas obrigações fiscais e administrativas.
+### 1. Visão Geral
 
-## Sobre o Projeto
+Desenvolver uma plataforma web (SaaS) voltada para MEIs e escritórios de contabilidade, com o objetivo de automatizar e simplificar o cumprimento das obrigações do MEI — como geração de guias, controle de débitos, envio de declarações e emissão de notas fiscais — eliminando a necessidade de acessar manualmente o Portal do MEI ou o Programa Gerador do MEI.
 
-MEI Simplificado é uma plataforma que facilita a gestão de microempreendedores individuais, permitindo:
+A aplicação será dividida em duas partes principais: uma **Landing Page institucional** e uma **SPA (Single Page Application)** protegida para usuários autenticados.
 
-- Gerenciamento de múltiplas empresas/CNPJs
-- Acompanhamento de obrigações fiscais
-- Controle de declarações e guias de pagamento
+---
 
-## Tecnologias Utilizadas
+### 2. Funcionalidades Principais
 
-- React
-- TypeScript
-- Vite
-- Tailwind CSS
-- shadcn/ui
-- Supabase (autenticação e banco de dados)
+1. **Crawlers Agendados**
 
-## Configuração Local
+   * Raspagem diária (madrugada) das tabelas de guias no Portal do MEI.
+   * Identificação de débitos pagos e em aberto.
 
-1. Clone o repositório:
-   ```
-   git clone <URL_DO_REPOSITÓRIO>
-   ```
+2. **Consulta em Tempo Real**
 
-2. Instale as dependências:
-   ```
-   npm install
-   ```
+   * Link para baixar guias em aberto via crawler sob demanda.
 
-3. Execute o projeto em modo de desenvolvimento:
-   ```
-   npm run dev
-   ```
+3. **Dashboards Interativos**
 
-## Estrutura do Projeto
+   * Visualização de status de débitos, relatórios financeiros e histórico de pagamentos.
 
-- `/src/components`: Componentes reutilizáveis
-- `/src/contexts`: Contextos React, incluindo autenticação
-- `/src/pages`: Páginas da aplicação
-- `/src/integrations`: Integrações com serviços externos (Supabase)
+4. **Notificações Automáticas**
 
-## Funcionalidades
+   * Envio de alertas por WhatsApp e e-mail (lotes para guias em atraso e lembretes de vencimento).
 
-### Autenticação
-O sistema utiliza autenticação via Supabase, permitindo cadastro e login de usuários.
+5. **Declaração Anual do MEI**
 
-### Gerenciamento de Empresas
-- Adicionar múltiplas empresas/CNPJs
-- Alternar entre diferentes empresas
-- Visualizar informações específicas de cada empresa
+   * Geração e envio automático da declaração anual via crawler.
 
-### Dashboard
-- Visão geral das obrigações fiscais
-- Resumo de guias pendentes e declarações
-- Notificações importantes
+6. **Módulo Futuro**
 
-## Banco de Dados
+   * Emissão de notas fiscais eletrônicas para MEI.
 
-O projeto utiliza Supabase como backend, com as seguintes tabelas:
+---
 
-- **profiles**: Armazena informações do usuário e sua empresa principal
-- **companies**: Armazena empresas adicionais vinculadas a um usuário
+### 3. Tecnologias e Ferramentas
 
-## Contribuição
+| Camada                   | Tecnologia / Ferramenta                | Observações                                   |
+| ------------------------ | -------------------------------------- | --------------------------------------------- |
+| **Backend**              | FastAPI                                | Python, OpenAPI, alto desempenho              |
+| **Banco de Dados**       | Supabase (PostgreSQL + Auth + Storage) | Supabase para MVP, auth e storage integrados  |
+| **Cache / Broker**       | Redis                                  | Cache de consultas e broker de tarefas        |
+| **Scraping / Automação** | Playwright (headless) + Celery         | Controle robusto de páginas dinâmicas         |
+| **Frontend SPA**         | Vite + React + TypeScript              | SPA protegida, moderna e performática         |
+| **Landing Page**         | Next.js ou React + Vite separado       | Página institucional para marketing           |
+| **UI & Dashboard**       | Chakra UI + Recharts                   | Componentes acessíveis e gráficos interativos |
+| **Notificações**         | Twilio WhatsApp API, SendGrid          | SMS/WhatsApp e e-mail transacional            |
+| **Infraestrutura**       | Docker, GitHub Actions, Vercel         | Contêineres, CI/CD e deploy rápido            |
+| **Monitoramento**        | Prometheus + Grafana                   | Métricas e dashboards operacionais            |
 
-Para contribuir com o projeto:
+---
 
-1. Crie um fork
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
-3. Faça commit das mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
-4. Faça push para a branch (`git push origin feature/nova-funcionalidade`)
-5. Abra um Pull Request
+### 4. Design e UX
 
-## Licença
+#### 🖥️ SPA Protegida (Aplicação Interna)
 
-Este projeto está licenciado sob a [Licença MIT](LICENSE).
+* **Framework**: Vite + React + TypeScript
+* **Design System**: Chakra UI
+* **Gráficos**: Recharts
+* **Ícones**: Lucide ou HeroIcons
+* **Fonte**: Inter ou Rubik
+* **Paleta de Cores**:
+
+  * Primária: `#2B6CB0`
+  * Secundária: `#38B2AC`
+  * Neutros: `#F7FAFC`, `#EDF2F7`, `#2D3748`
+* **UX**:
+
+  * Menu lateral com ícones
+  * Header com alertas e usuário logado
+  * Skeleton loaders e Framer Motion para transições suaves
+
+#### 🌐 Landing Page
+
+* **Objetivo**: apresentar o produto, gerar conversões
+* **Design**: moderno e limpo
+* **Seções**:
+
+  * Benefícios
+  * Como funciona
+  * Planos e preços
+  * Depoimentos
+  * CTA para cadastro ou contato
+
+---
+
+### 5. Fluxo de Dados
+
+1. **Agendamento**: Celery-beat dispara tarefa de scraping às 02:00.
+2. **Scraping**: Playwright faz login e coleta dados; processamento e inserção no Supabase.
+3. **Armazenamento**: Supabase grava guias e status de débitos.
+4. **API**: FastAPI expõe endpoints REST:
+
+   * `GET /debitos`
+   * `GET /debitos/{id}/download`
+   * `POST /notificacoes/whatsapp`
+5. **Front-End SPA**: React consome API e exibe dashboards e tabelas.
+6. **Notificações**: Worker verifica status e envia mensagens via Twilio e SendGrid.
+
+---
+
+### 6. Estrutura de Pastas (Back-End)
+
+```bash
+src/
+├── api/
+│   ├── main.py
+│   ├── routers/
+│   │   ├── debitos.py
+│   │   └── notificacoes.py
+├── core/
+│   ├── config.py
+│   ├── security.py
+├── services/
+│   ├── scraping.py
+│   └── notifications.py
+├── tasks/
+│   ├── celery_app.py
+│   └── tasks.py
+└── models/
+    └── debito.py
+```
+
+---
+
+### 7. Próximos Passos
+
+* Configurar projeto FastAPI e Supabase.
+* Implementar crawler com Playwright e agendamento com Celery.
+* Criar primeiros endpoints e testes.
+* Montar layout inicial em React com páginas de login e dashboard.
+* Criar landing page institucional com seções e CTA.
+
+---
+
+*Esse prompt serve como guia de desenvolvimento para equipes de engenharia ou para gerar requerimentos em ferramentas de IA.*
