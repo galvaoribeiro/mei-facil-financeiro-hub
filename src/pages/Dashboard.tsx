@@ -4,11 +4,19 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
+import { CompanySelector } from "@/components/dashboard/CompanySelector";
+
+type CompanyWithId = {
+  id: string;
+  company_name: string | null;
+  cnpj: string | null;
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<Tables<"profiles"> | null>(null);
+  const [currentCompany, setCurrentCompany] = useState<CompanyWithId | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,6 +42,15 @@ const Dashboard = () => {
           console.error("Error fetching profile:", error);
         } else {
           setProfile(data);
+          
+          // Se o perfil tem uma empresa, definimos como empresa atual
+          if (data.company_name || data.cnpj) {
+            setCurrentCompany({
+              id: data.id,
+              company_name: data.company_name,
+              cnpj: data.cnpj,
+            });
+          }
         }
       } catch (error) {
         console.error("Session error:", error);
@@ -52,6 +69,10 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error signing out:", error);
     }
+  };
+
+  const handleCompanyChange = (company: CompanyWithId) => {
+    setCurrentCompany(company);
   };
 
   if (loading) {
@@ -74,15 +95,30 @@ const Dashboard = () => {
             Bem-vindo, {profile?.full_name || user?.email}
           </p>
         </div>
-        <Button onClick={handleSignOut} variant="outline">
-          Sair
-        </Button>
+        <div className="flex items-center gap-4">
+          <CompanySelector 
+            userId={user.id} 
+            currentCompany={currentCompany}
+            onCompanyChange={handleCompanyChange}
+          />
+          <Button onClick={handleSignOut} variant="outline">
+            Sair
+          </Button>
+        </div>
       </div>
       
       <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Resumo</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          {currentCompany?.company_name 
+            ? `Resumo - ${currentCompany.company_name}` 
+            : currentCompany?.cnpj 
+              ? `Resumo - CNPJ: ${currentCompany.cnpj}` 
+              : "Resumo"}
+        </h2>
         <p className="text-gray-600 mb-2">
-          Em breve você verá aqui um resumo das suas obrigações MEI.
+          {currentCompany?.company_name || currentCompany?.cnpj
+            ? "Aqui você verá um resumo das obrigações MEI desta empresa."
+            : "Adicione uma empresa para ver as obrigações MEI."}
         </p>
       </div>
       
