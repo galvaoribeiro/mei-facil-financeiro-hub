@@ -1,73 +1,81 @@
-# Welcome to your Lovable project
 
-## Project info
+# MEI Simplificado
 
-**URL**: https://lovable.dev/projects/aaa975e2-b502-4e91-a68e-66463973b8dd
+Um aplicativo web para ajudar empreendedores individuais (MEI) a gerenciar suas obrigações fiscais e administrativas.
 
-## How can I edit this code?
+## Sobre o Projeto
 
-There are several ways of editing your application.
+MEI Simplificado é uma plataforma que facilita a gestão de microempreendedores individuais, permitindo:
 
-**Use Lovable**
+- Gerenciamento de múltiplas empresas/CNPJs
+- Acompanhamento de obrigações fiscais
+- Controle de declarações e guias de pagamento
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/aaa975e2-b502-4e91-a68e-66463973b8dd) and start prompting.
+## Tecnologias Utilizadas
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
 - React
-- shadcn-ui
+- TypeScript
+- Vite
 - Tailwind CSS
+- shadcn/ui
+- Supabase (autenticação e banco de dados)
 
-## How can I deploy this project?
+## Configuração Local
 
-Simply open [Lovable](https://lovable.dev/projects/aaa975e2-b502-4e91-a68e-66463973b8dd) and click on Share -> Publish.
+1. Clone o repositório:
+   ```
+   git clone <URL_DO_REPOSITÓRIO>
+   ```
 
-## Can I connect a custom domain to my Lovable project?
+2. Instale as dependências:
+   ```
+   npm install
+   ```
 
-Yes, you can!
+3. Execute o projeto em modo de desenvolvimento:
+   ```
+   npm run dev
+   ```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Estrutura do Projeto
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- `/src/components`: Componentes reutilizáveis
+- `/src/contexts`: Contextos React, incluindo autenticação
+- `/src/pages`: Páginas da aplicação
+- `/src/integrations`: Integrações com serviços externos (Supabase)
+
+## Funcionalidades
+
+### Autenticação
+O sistema utiliza autenticação via Supabase, permitindo cadastro e login de usuários.
+
+### Gerenciamento de Empresas
+- Adicionar múltiplas empresas/CNPJs
+- Alternar entre diferentes empresas
+- Visualizar informações específicas de cada empresa
+
+### Dashboard
+- Visão geral das obrigações fiscais
+- Resumo de guias pendentes e declarações
+- Notificações importantes
+
+## Banco de Dados
+
+O projeto utiliza Supabase como backend, com as seguintes tabelas:
+
+- **profiles**: Armazena informações do usuário e sua empresa principal
+- **companies**: Armazena empresas adicionais vinculadas a um usuário
+
+## Contribuição
+
+Para contribuir com o projeto:
+
+1. Crie um fork
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
+3. Faça commit das mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
+4. Faça push para a branch (`git push origin feature/nova-funcionalidade`)
+5. Abra um Pull Request
+
+## Licença
+
+Este projeto está licenciado sob a [Licença MIT](LICENSE).
