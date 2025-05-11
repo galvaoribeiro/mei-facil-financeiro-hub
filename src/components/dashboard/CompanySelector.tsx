@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Tables } from "@/integrations/supabase/types";
 import { ChevronDown, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -36,47 +35,48 @@ export const CompanySelector = ({
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const { data, error } = await supabase
+        // First fetch the user's profile data
+        const { data: profileData, error: profileError } = await supabase
           .from("profiles")
           .select("id, company_name, cnpj")
-          .eq("id", userId);
+          .eq("id", userId)
+          .single();
 
-        if (error) {
-          throw error;
+        if (profileError) {
+          throw profileError;
         }
 
-        if (data && data.length > 0) {
-          // Se temos apenas o perfil principal (sem empresas adicionais)
-          const companies: CompanyWithId[] = [];
-          if (data[0].company_name || data[0].cnpj) {
-            companies.push({
-              id: data[0].id,
-              company_name: data[0].company_name,
-              cnpj: data[0].cnpj,
-            });
-          }
+        const companies: CompanyWithId[] = [];
+        
+        // Add the main profile company if it exists
+        if (profileData && (profileData.company_name || profileData.cnpj)) {
+          companies.push({
+            id: profileData.id,
+            company_name: profileData.company_name,
+            cnpj: profileData.cnpj,
+          });
+        }
 
-          // Buscar empresas adicionais do usuário
-          const { data: additionalCompanies, error: additionalError } = await supabase
-            .from("companies")
-            .select("id, company_name, cnpj")
-            .eq("user_id", userId);
+        // Next fetch additional companies from the companies table
+        const { data: additionalCompanies, error: companiesError } = await supabase
+          .from("companies")
+          .select("id, company_name, cnpj")
+          .eq("user_id", userId);
 
-          if (additionalError) {
-            console.error("Erro ao buscar empresas adicionais:", additionalError);
-          } else if (additionalCompanies) {
-            companies.push(...additionalCompanies);
-          }
+        if (companiesError) {
+          console.error("Error fetching additional companies:", companiesError);
+        } else if (additionalCompanies) {
+          companies.push(...additionalCompanies);
+        }
 
-          setCompanies(companies);
-          
-          // Se temos empresas e nenhuma empresa atual selecionada, selecionar a primeira
-          if (companies.length > 0 && !currentCompany) {
-            onCompanyChange(companies[0]);
-          }
+        setCompanies(companies);
+        
+        // If we have companies and no current company selected, select the first one
+        if (companies.length > 0 && !currentCompany) {
+          onCompanyChange(companies[0]);
         }
       } catch (error) {
-        console.error("Erro ao buscar empresas:", error);
+        console.error("Error fetching companies:", error);
       } finally {
         setLoading(false);
       }
